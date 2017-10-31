@@ -1,3 +1,8 @@
+amazon_scraper/pages/
+amazon_scraper/questions/
+amazon_scraper/reviews/
+amazon_scraper/results/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
