@@ -4,6 +4,9 @@
 # * manage ssl errors!! 
 # * manage timeouts
 # * and manage wait time
+# * manage quiet
+# * manage destination
+# * manage ignore_dups
 
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
@@ -27,12 +30,14 @@ class AmazonScraper(object):
 	def __init__(self, **kwargs):
 
 		default_attr = dict(
-			asin = '',
-			asins = [],
+			asin = [],
 			verbose=False,
+			quiet=False,
+			ignore_dups=False,
 			no_reviews = False,
 			no_questions = False,
-			save_main_pages=True
+			destination='./',
+			save_pages=True
 			)
 
 		allowed_attr = list(default_attr.keys())
@@ -301,7 +306,7 @@ class AmazonScraper(object):
 				else:
 
 					# save the page if the user specified to
-					if self.save_main_pages:
+					if self.save_pages:
 						if not os.path.exists('./pages'):
 							os.makedirs('./pages')
 						page_file = open("./pages/" + asin + '.html', 'w+')
@@ -393,33 +398,53 @@ class AmazonScraper(object):
 
 		return logger
 
+	@staticmethod
+	def parse_asins_from_file(path):
+		"""Reads a list of asins from a file"""
+		
+		asins = []
+
+		try:
+			file_to_read = open(path, 'r')
+			for line in file_to_read:
+				asins.append(line.strip())
+		except IOError as err:
+			raise ValueError("File not found " + err)
+
+		return asins
+
 	
 
 def main():
 
 	parser = argparse.ArgumentParser(
-		description = "this is amazon_scraper",
+		description = "amazon-scraper downloads questions and reviews from amazon products",
 		formatter_class = argparse.RawDescriptionHelpFormatter,
 		fromfile_prefix_chars='@'
 		)
 
 	parser.add_argument('asin', help='Amazon asin(s) to be scraped', nargs='*')
-	parser.add_argument('--filename', '-f', help='Specify path to list of asins')
-	parser.add_argument('--save-main-pages', '-p', action='store_true', default=True, help='Saves the main pages scraped')
+	parser.add_argument('--file', '-f', help='Specify path to list of asins')
+	parser.add_argument('--save-pages', '-p', action='store_true', default=True, help='Saves the main pages scraped')
 	parser.add_argument('--verbose', '-v', action='store_true', default=False, help='Logging verbosity level')
 	parser.add_argument('--no-reviews', action='store_true', default=False, help='Do not scrape reviews')
 	parser.add_argument('--no-questions', action='store_true', default=False, help='Do not scrape questions')
-	# parser.add_argument('')
+	parser.add_argument('--destination', '-d', default='./', help="Set a destination folder")
+	parser.add_argument('--ignore-dups', action='store_true', help="Do not consider previous operations")
+	parser.add_argument('--quiet', '-q', default=False, action='store_true', help='Be quiet while scraping')
 
 	args = parser.parse_args()
 	
-	if args.asin is None and args.filename is None:
+	if not args.asin and args.filename is None:
 		parser.print_help()
 		raise ValueError('Please provide asin or filename.')
 	elif args.asin and args.filename:
 		parser.print_help()
 		raise ValueError('Please provide only one of the following: asin(s) or filename')
 	
+	if args.filename:
+		args.asin = AmazonScraper.parse_asins_from_file(args.file)
+
 	scraper = AmazonScraper(**vars(args))
 
 	scraper.scrape() 
