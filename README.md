@@ -1,8 +1,24 @@
 # Amazon Scraper
 
+[![Documentation Status](https://readthedocs.org/projects/amazon-scraper/badge/?version=latest)](http://amazon-scraper.readthedocs.io/en/latest/?badge=latest)
+
 Amazon-scraper is a command line application to collect reviews and questions/answerts from amazon products.
 
+Read the documentation here: [amazon-scraper on readthedocs](http://amazon-scraper.readthedocs.io/)
+
 ## Installation
+
+### via pip
+
+~ TODO
+
+### cloning this repository
+
+```bash
+$ git clone https://github.com/picorana/amazon-scraper.git   
+$ cd amazon-scraper
+$ python setup.py install
+```
 
 ## Usage
 
