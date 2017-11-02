@@ -435,14 +435,14 @@ def main():
 
 	args = parser.parse_args()
 	
-	if not args.asin and args.filename is None:
+	if not args.asin and args.file is None:
 		parser.print_help()
 		raise ValueError('Please provide asin or filename.')
-	elif args.asin and args.filename:
+	elif args.asin and args.file:
 		parser.print_help()
 		raise ValueError('Please provide only one of the following: asin(s) or filename')
 	
-	if args.filename:
+	if args.file:
 		args.asin = AmazonScraper.parse_asins_from_file(args.file)
 
 	scraper = AmazonScraper(**vars(args))
