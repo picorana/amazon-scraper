@@ -58,51 +58,58 @@ class AmazonScraper(object):
 
 		for asin in self.asin: 
 
-			self.logger.info("Examining product " + asin)
+			try:
+				self.logger.info("Examining product " + asin)
 
-			# collect a list of proxies
-			# this is updated for each product,
-			# I think it would be better to update it each time
-			# too many proxies get banned by amazon
-			self.proxies = self.get_proxies()
+				# collect a list of proxies
+				# this is updated for each product,
+				# I think it would be better to update it each time
+				# too many proxies get banned by amazon
+				self.proxies = self.get_proxies()
 
-			# collect the reviews url and the total amount
-			# of pages to be scraped
-			main_reviews_url, review_pages_number = self.retrieve_page(asin)
+				# collect the reviews url and the total amount
+				# of pages to be scraped
+				main_reviews_url, review_pages_number = self.retrieve_page(asin)
 
-			if not self.no_reviews:
-				# scrape the reviews
-				reviews, failed_urls = self.retrieve_reviews(main_reviews_url, review_pages_number)
-				reviews_list = list(reviews.queue)
-				failed_urls_list = list(failed_urls.queue)
+				if not self.no_reviews:
+					# scrape the reviews
+					reviews, failed_urls = self.retrieve_reviews(main_reviews_url, review_pages_number)
+					reviews_list = list(reviews.queue)
+					failed_urls_list = list(failed_urls.queue)
 
-				# log the number of results found
-				self.logger.info("found " + str(len(reviews_list)) + " reviews for product " + asin)
-				self.logger.info("failed " + str(len(failed_urls_list)) + " requests for product " + asin)
+					# log the number of results found
+					self.logger.info("found " + str(len(reviews_list)) + " reviews for product " + asin)
+					self.logger.info("failed " + str(len(failed_urls_list)) + " requests for product " + asin)
 
-				# save the results to file
-				if not os.path.exists('./reviews'): os.makedirs('./reviews')
-				results_file = open("./reviews/" + asin + ".json", 'w+')
-				for i in reviews_list: 
-					json.dump(i, results_file)
-					results_file.write('\n')
+					# save the results to file
+					if not os.path.exists('./reviews'): os.makedirs('./reviews')
+					results_file = open("./reviews/" + asin + ".json", 'w+')
+					for i in reviews_list: 
+						json.dump(i, results_file)
+						results_file.write('\n')
 
-			# switch this if true with param about 
-			if not self.no_questions:
-			 	questions, fails = self.retrieve_questions(asin)
+				# switch this if true with param about 
+				if not self.no_questions:
+				 	questions, fails = self.retrieve_questions(asin)
 
-			 	questions_list = list(questions.queue)
-			 	fails_questions_list = list(fails.queue)
+				 	questions_list = list(questions.queue)
+				 	fails_questions_list = list(fails.queue)
 
-			 	self.logger.info("found " + str(len(questions_list)) + " questions for product " + asin)
-			 	self.logger.info("failed " + str(len(fails_questions_list)) + " urls for product " + asin)
+				 	self.logger.info("found " + str(len(questions_list)) + " questions for product " + asin)
+				 	self.logger.info("failed " + str(len(fails_questions_list)) + " urls for product " + asin)
 
-			 	# save questions to file
-				if not os.path.exists('./questions'): os.makedirs('./questions')
-				questions_file = open("./questions/" + asin + ".json", 'w+')
-				for i in questions_list: 
-					json.dump(i, questions_file)
-					questions_file.write('\n')			 	
+				 	# save questions to file
+					if not os.path.exists('./questions'): os.makedirs('./questions')
+					questions_file = open("./questions/" + asin + ".json", 'w+')
+					for i in questions_list: 
+						json.dump(i, questions_file)
+						questions_file.write('\n')
+
+			except RuntimeError as err:
+				self.logger.warning(err)
+			except KeyboardInterrupt:
+				self.logger.warning('Keyboard interrupt received')
+				sys.exit()
 
 
 	def retrieve_questions(self, asin):
@@ -413,37 +420,42 @@ class AmazonScraper(object):
 
 		return asins
 
-	
+	@staticmethod
+	def parse_args(args):
+
+		parser = argparse.ArgumentParser(
+			description = "amazon-scraper downloads questions and reviews from amazon products",
+			formatter_class = argparse.RawDescriptionHelpFormatter,
+			fromfile_prefix_chars='@'
+			)
+
+		parser.add_argument('asin', help='Amazon asin(s) to be scraped', nargs='*')
+		parser.add_argument('--file', '-f', help='Specify path to list of asins')
+		parser.add_argument('--save-pages', '-p', action='store_true', default=True, help='Saves the main pages scraped')
+		parser.add_argument('--verbose', '-v', action='store_true', default=False, help='Logging verbosity level')
+		parser.add_argument('--no-reviews', action='store_true', default=False, help='Do not scrape reviews')
+		parser.add_argument('--no-questions', action='store_true', default=False, help='Do not scrape questions')
+		parser.add_argument('--destination', '-d', default='./', help="Set a destination folder")
+		parser.add_argument('--ignore-dups', action='store_true', help="Do not consider previous operations")
+		parser.add_argument('--quiet', '-q', default=False, action='store_true', help='Be quiet while scraping')
+
+		args = parser.parse_args(args)
+		
+		if not args.asin and args.file is None:
+			parser.print_help()
+			raise ValueError('Please provide asin or filename.')
+		elif args.asin and args.file:
+			parser.print_help()
+			raise ValueError('Please provide only one of the following: asin(s) or filename')
+		
+		if args.file:
+			args.asin = AmazonScraper.parse_asins_from_file(args.file)
+
+		return args
 
 def main():
 
-	parser = argparse.ArgumentParser(
-		description = "amazon-scraper downloads questions and reviews from amazon products",
-		formatter_class = argparse.RawDescriptionHelpFormatter,
-		fromfile_prefix_chars='@'
-		)
-
-	parser.add_argument('asin', help='Amazon asin(s) to be scraped', nargs='*')
-	parser.add_argument('--file', '-f', help='Specify path to list of asins')
-	parser.add_argument('--save-pages', '-p', action='store_true', default=True, help='Saves the main pages scraped')
-	parser.add_argument('--verbose', '-v', action='store_true', default=False, help='Logging verbosity level')
-	parser.add_argument('--no-reviews', action='store_true', default=False, help='Do not scrape reviews')
-	parser.add_argument('--no-questions', action='store_true', default=False, help='Do not scrape questions')
-	parser.add_argument('--destination', '-d', default='./', help="Set a destination folder")
-	parser.add_argument('--ignore-dups', action='store_true', help="Do not consider previous operations")
-	parser.add_argument('--quiet', '-q', default=False, action='store_true', help='Be quiet while scraping')
-
-	args = parser.parse_args()
-	
-	if not args.asin and args.file is None:
-		parser.print_help()
-		raise ValueError('Please provide asin or filename.')
-	elif args.asin and args.file:
-		parser.print_help()
-		raise ValueError('Please provide only one of the following: asin(s) or filename')
-	
-	if args.file:
-		args.asin = AmazonScraper.parse_asins_from_file(args.file)
+	args = AmazonScraper.parse_args(sys.argv[1:])
 
 	scraper = AmazonScraper(**vars(args))
 
