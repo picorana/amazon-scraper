@@ -10,4 +10,4 @@ install:
 script: 
   - nosetests amazon_scraper/tests/test_amazon.py --with-coverage --cover-package=amazon_scraper
 after-success: 
-  - coveralls
+  - codecov
