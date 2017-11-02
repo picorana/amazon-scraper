@@ -12,7 +12,7 @@ setup(
 	author_email='',
 	license='Public domain',
 	packages=find_packages(),
-	install_requires=['bs4', 'fake_useragent', 'pprint', 'requests'],
+	install_requires=[],
 	entry_points={
 		'console_scripts': ['amazon-scraper=amazon_scraper.app:main']
 	},
