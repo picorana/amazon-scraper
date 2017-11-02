@@ -321,7 +321,7 @@ class AmazonScraper(object):
 					if soup.find("div", {"id":"reviews-medley-footer"}) != None:
 						review_pages_number = int(ceil(float(soup.find("div", {"id":"reviews-medley-footer"}).a.text
 							.split("See all ")[1]
-							.split(" customer")[0])/10))
+							.split(" customer")[0].replace(",", ""))/10))
 					else: review_pages_number = 0
 
 					return reviews_url, review_pages_number

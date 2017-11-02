@@ -6,4 +6,7 @@ install:
   - pip install requests_mock
   - pip install -e .
 # command to run tests
-script: nosetests
+script: 
+  - nosetests amazon_scraper/tests/test_amazon.py --with-coverage --cover-package=amazon_scraper
+after-success: 
+  - coveralls

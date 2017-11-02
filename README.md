@@ -2,6 +2,7 @@
 
 [![Documentation Status](https://readthedocs.org/projects/amazon-scraper/badge/?version=latest)](http://amazon-scraper.readthedocs.io/en/latest/?badge=master)
 [![Build](https://travis-ci.org/picorana/amazon-scraper.svg?branch=master)](https://travis-ci.org/picorana/amazon-scraper.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/picorana/amazon-scraper/badge.svg?branch=master)](https://coveralls.io/github/picorana/amazon-scraper?branch=master)
 
 Amazon-scraper is a command line application to collect reviews and questions/answers from amazon products.
 

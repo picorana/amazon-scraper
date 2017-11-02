@@ -4,3 +4,4 @@ bs4==0.0.1
 fake-useragent==0.1.7
 pprint==0.1
 requests==2.18.4
+nose
