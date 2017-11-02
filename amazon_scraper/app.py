@@ -20,6 +20,7 @@ import threading, Queue
 import time
 import json
 import re
+import ssl
 import os, sys 
 
 from constants import *
@@ -372,7 +373,7 @@ class AmazonScraper(object):
 			if not len(proxies) > 0:
 				attempt += 1
 				if attempt >= 10:
-					raise ConnectionError("Failed to \
+					raise requests.ConnectionError("Failed to \
 						retrieve any proxy after several \
 						attempts, check your connection status")
 				time.sleep(0.5)
