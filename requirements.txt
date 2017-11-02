@@ -6,4 +6,4 @@ pprint==0.1
 requests==2.18.4
 nose
 coverage
-coverall
+python-coveralls
