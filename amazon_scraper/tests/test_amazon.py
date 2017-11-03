@@ -47,7 +47,7 @@ class TestAmazon(unittest.TestCase):
 		self.amazon_scraper.scrape()
 	"""
 
-
+	"""
 	@httpretty.activate
 	def test_get_proxies(self):
 		httpretty.register_uri(httpretty.GET, 'https://free-proxy-list.net/anonymous-proxy.html', body="", status=404)
@@ -57,13 +57,9 @@ class TestAmazon(unittest.TestCase):
 
 		with self.assertRaises(requests.ConnectionError):
 			self.amazon_scraper.get_proxies()
-
+	"""
 
 	def test_parse_asins_from_file(self):
 		res = AmazonScraper.parse_asins_from_file('amazon_scraper/tests/fixtures/test_parse_asins_from_file.txt')
 		assert res == ['aaa', 'bbb']
-
-	@ httpretty.activate
-	def test_httpretty(self):
-		httpretty.register_uri(httpretty.GET, "http://yipit.com/", body="Find the best daily deals")
 		
