@@ -1,9 +1,10 @@
-BeautifulSoup==3.2.1
-beautifulsoup4==4.6.0
+BeautifulSoup
+beautifulsoup4
 bs4
-fake-useragent==0.1.7
-pprint==0.1
-requests==2.18.4
+fake-useragent
+pprint
+requests
 nose
 coverage
 codecov
+httpretty
