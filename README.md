@@ -3,6 +3,7 @@
 [![Documentation Status](https://readthedocs.org/projects/amazon-scraper/badge/?version=latest)](http://amazon-scraper.readthedocs.io/en/latest/?badge=master)
 [![Build](https://travis-ci.org/picorana/amazon-scraper.svg?branch=master)](https://travis-ci.org/picorana/amazon-scraper.svg?branch=master)
 [![codecov](https://codecov.io/gh/picorana/amazon-scraper/branch/master/graph/badge.svg)](https://codecov.io/gh/picorana/amazon-scraper)
+[![Requirements Status](https://requires.io/github/picorana/amazon-scraper/requirements.svg?branch=master)](https://requires.io/github/picorana/amazon-scraper/requirements/?branch=master)
 
 Amazon-scraper is a command line application to collect reviews and questions/answers from amazon products.
 
@@ -25,6 +26,7 @@ Read the documentation here: [amazon-scraper on readthedocs](http://amazon-scrap
 ```bash
 $ git clone https://github.com/picorana/amazon-scraper.git   
 $ cd amazon-scraper
+$ pip install -r requirements.txt
 $ python setup.py install
 ```
 
