@@ -263,6 +263,8 @@ class AmazonScraper(object):
 						review['rating'] = box.find("i", {"class":"review-rating"}).span.text
 						review['author'] = box.find("a", {"class":"author"}).text
 						review['author_id'] = box.find("a", {"class":"author"}).get('href').split('/')[4]
+						x = (lambda text : 0 if text == None else text.text.split(' ')[0])(box.find('span', {'class': 'cr-vote-text'}))
+						review['helpful'] = (lambda x : x if x != 'One' else 0)(x)
 						results.put(review)
 
 					self.logger.info("finished scraping " + url)
